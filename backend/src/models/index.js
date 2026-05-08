@@ -1,0 +1,9 @@
+export { User }           from "./user.model.js";
+export { Admin }          from "./admin.model.js";
+export { DrivingLicence } from "./drivingLicence.model.js";
+export { Aadhar }         from "./aadhar.model.js";
+export { Vehicle }        from "./vehicle.model.js";
+export { Booking }        from "./booking.model.js";
+export { Payment }        from "./payment.model.js";
+export { Message }        from "./message.model.js";
+export { Review }         from "./review.model.js";
