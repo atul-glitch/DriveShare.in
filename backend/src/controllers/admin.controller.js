@@ -2,13 +2,11 @@ import { Admin, User, Vehicle } from "../models/index.js";
 import { ApiError }    from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { getCookieOptions } from "../utils/http.js";
 
 // ── Cookie options ──────────────────────────────────────────────────────────
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-};
+const ACCESS_COOKIE_MAX_AGE = 15 * 60 * 1000;
+const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 // ── Helper: generate both tokens and persist refresh token ─────────────────
 const generateAdminTokens = async (adminId) => {
@@ -63,8 +61,8 @@ export const adminLogin = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, cookieOptions)
-    .cookie("refreshToken", refreshToken, cookieOptions)
+    .cookie("accessToken", accessToken, getCookieOptions({ maxAge: ACCESS_COOKIE_MAX_AGE }))
+    .cookie("refreshToken", refreshToken, getCookieOptions({ maxAge: REFRESH_COOKIE_MAX_AGE }))
     .json(new ApiResponse(200, { admin: loggedIn, accessToken, refreshToken }, "Admin logged in successfully"));
 });
 
@@ -76,8 +74,8 @@ export const adminLogout = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .clearCookie("accessToken", cookieOptions)
-    .clearCookie("refreshToken", cookieOptions)
+    .clearCookie("accessToken", getCookieOptions())
+    .clearCookie("refreshToken", getCookieOptions())
     .json(new ApiResponse(200, {}, "Admin logged out successfully"));
 });
 

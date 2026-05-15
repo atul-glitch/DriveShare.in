@@ -6,7 +6,9 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed": "node seed.js",
+    "init-admin": "node init-admin.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

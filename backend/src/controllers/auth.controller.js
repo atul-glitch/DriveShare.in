@@ -3,14 +3,12 @@ import { ApiError }    from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { getCookieOptions } from "../utils/http.js";
 import jwt from "jsonwebtoken";
 
 // ── Cookie options ──────────────────────────────────────────────────────────
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
-};
+const ACCESS_COOKIE_MAX_AGE = 15 * 60 * 1000;
+const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 // ── Helper: generate both tokens and persist refresh token ─────────────────
 const generateTokens = async (userId) => {
@@ -150,14 +148,8 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000, // 15 min
-    })
-    .cookie("refreshToken", refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    })
+    .cookie("accessToken", accessToken, getCookieOptions({ maxAge: ACCESS_COOKIE_MAX_AGE }))
+    .cookie("refreshToken", refreshToken, getCookieOptions({ maxAge: REFRESH_COOKIE_MAX_AGE }))
     .json(
       new ApiResponse(200, { user: loggedIn, accessToken, refreshToken }, "Login successful")
     );
@@ -175,8 +167,8 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .clearCookie("accessToken", cookieOptions)
-    .clearCookie("refreshToken", cookieOptions)
+    .clearCookie("accessToken", getCookieOptions())
+    .clearCookie("refreshToken", getCookieOptions())
     .json(new ApiResponse(200, {}, "Logged out successfully"));
 });
 
@@ -204,14 +196,8 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, {
-      ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
-    })
-    .cookie("refreshToken", refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    })
+    .cookie("accessToken", accessToken, getCookieOptions({ maxAge: ACCESS_COOKIE_MAX_AGE }))
+    .cookie("refreshToken", refreshToken, getCookieOptions({ maxAge: REFRESH_COOKIE_MAX_AGE }))
     .json(new ApiResponse(200, { accessToken, refreshToken }, "Tokens refreshed"));
 });
 
