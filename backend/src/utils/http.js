@@ -39,7 +39,10 @@ export const getCookieOptions = ({ maxAge } = {}) => {
 };
 
 export const getCorsOptions = () => {
-  const rawOrigins = process.env.CORS_ORIGIN?.trim();
+  const rawOrigins = (
+    process.env.CORS_ORIGIN ||
+    (process.env.NODE_ENV === "production" ? "https://drive-share-in.vercel.app" : "")
+  ).trim();
 
   if (!rawOrigins || rawOrigins === "*") {
     return {
