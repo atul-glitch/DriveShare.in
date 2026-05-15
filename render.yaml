@@ -12,7 +12,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: CORS_ORIGIN
-        value: https://drive-share-in.vercel.app/
+        value: https://drive-share-in.vercel.app
       - key: COOKIE_SAME_SITE
         value: none
       - key: COOKIE_SECURE
